@@ -1,7 +1,10 @@
 # Check for -d flag to set DEBUG mode
-if [[ "$*" == *"-d"* ]]; then
-  export DEBUG=true
-fi
+for arg in "$@"; do
+  if [ "$arg" == "-d" ]; then
+    export DEBUG=true
+    break
+  fi
+done
 
 export SUDO_ASKPASS=~/WebstormProjects/HomePilotJSServer/askpass.sh
 
