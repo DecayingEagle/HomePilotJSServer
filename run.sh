@@ -32,7 +32,7 @@ export MY_VAR="$PORT"
 if ! pgrep -x "webstorm.sh" > /dev/null; then
   echo "WebStorm is not running. Executing main.ts..."
   # Run the TypeScript script
-  npx ts-node src/main.ts
+  npx tsx src/main.ts
 else
   echo "WebStorm is running. Skipping execution of main.ts."
 fi
