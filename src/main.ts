@@ -60,6 +60,13 @@ async function initializeDriver() {
       level: "silly",
       transports: [fileTransport, consoleTransport],  // Use the custom transports
     },
+    // TODO: Add your own security keys here
+    securityKeys: {
+      S0_Legacy: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+      S2_Unauthenticated: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+      S2_Authenticated: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+      S2_AccessControl: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+    },
   });
 
   // Error handler before starting the driver
