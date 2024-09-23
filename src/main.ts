@@ -85,26 +85,26 @@ async function initializeDriver() {
     driver.controller.on("node added", (node) => {
       console.log(`Node ${node.id} added to the network.`);
 
-      // Define the value IDs for the specific sensors
-      const sensorValueIDs = [
-        { id: "UV", valueId: { commandClass: 49, property: "UV" } },
-        { id: "Motion", valueId: { commandClass: 113, property: "Motion" } },
-        { id: "Temperature", valueId: { commandClass: 49, property: "Air temperature" } },
-        { id: "Light", valueId: { commandClass: 49, property: "Illuminance" } },
-        { id: "Vibration", valueId: { commandClass: 113, property: "Vibration" } },
-      ];
-
-      sensorValueIDs.forEach(({ id, valueId }) => {
-        const value = node.getValue(valueId);
-        console.log(`${id} Value: ${value}`);
-      });
-
       node.on("ready", () => {
         console.log(`Node ${node.id} is ready.`);
-      });
 
-      node.on("value updated", (valueId, value) => {
-        console.log(`Node ${node.id} value updated: ${valueId.id} = ${value}`);
+        // Define the value IDs for the specific sensors
+        const sensorValueIDs = [
+          { id: "UV", valueId: { commandClass: 49, property: "UV" } },
+          { id: "Motion", valueId: { commandClass: 113, property: "Motion" } },
+          { id: "Temperature", valueId: { commandClass: 49, property: "Air temperature" } },
+          { id: "Light", valueId: { commandClass: 49, property: "Illuminance" } },
+          { id: "Vibration", valueId: { commandClass: 113, property: "Vibration" } },
+        ];
+
+        sensorValueIDs.forEach(({ id, valueId }) => {
+          const value = node.getValue(valueId);
+          console.log(`${id} Value: ${value}`);
+        });
+
+        node.on("value updated", (valueId, value) => {
+          console.log(`Node ${node.id} value updated: ${valueId.id} = ${value}`);
+        });
       });
     });
   });
