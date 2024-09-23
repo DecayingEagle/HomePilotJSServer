@@ -15,7 +15,7 @@ curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-Install `zenity`:
+Install `ssh-askpass`:
 
 ```shell
 sudo apt-get install -y ssh-askpass
