@@ -41,8 +41,6 @@ const consoleTransport = new winston.transports.Console({
   ),
 });
 
-const port = process.env.MY_VAR || "/dev/ttyACM0";  // Default to /dev/ttyACM0 if MY_VAR is not set
-
 // Function to detect the correct serial port
 async function detectSerialPort(): Promise<string> {
   const ports = await SerialPort.list();
@@ -70,9 +68,38 @@ async function initializeDriver() {
   });
 
   // Event listener for driver readiness
-  driver.once("driver ready", () => {
+  driver.once("driver ready", async () => {
     console.log("Driver is ready! Initializing nodes...");
-    // Your node initialization code here
+
+    // Add a new node to the network
+    console.log("Starting inclusion process...");
+    try {
+      const inclusionResult = await driver.controller.beginInclusion();
+      if (inclusionResult) {
+        console.log("Node inclusion started successfully.");
+      } else {
+        console.log("Node inclusion failed to start.");
+      }
+    } catch (error) {
+      console.error(`Error during node inclusion: ${error}`);
+    }
+
+    // Listen for node added event
+    driver.controller.on("node added", (node) => {
+      console.log(`Node ${node.id} added to the network.`);
+      node.on("ready", () => {
+        console.log(`Node ${node.id} is ready.`);
+        // Read values from the sensor
+        node.getDefinedValueIDs().forEach((valueId) => {
+          const value = node.getValue(valueId);
+          console.log(`Value ID: ${valueId}, Value: ${value}`);
+        });
+      });
+
+      node.on("value updated", (valueId, value) => {
+        console.log(`Node ${node.id} value updated: ${valueId.id} = ${value}`);
+      });
+    });
   });
 
   // Start the Z-Wave driver
@@ -101,7 +128,7 @@ async function initializeDriver() {
         process.exit(0);  // Exit after the driver is destroyed
       }
     });
-  };
+  }
 
   // Ensure the driver is destroyed on process exit
   process.on('exit', async () => {
