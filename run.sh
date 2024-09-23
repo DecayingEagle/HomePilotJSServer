@@ -1,10 +1,9 @@
-#!/bin/bash
-
-# Path to the askpass script
-if [ "$(id -u)" != "0" ]; then
-     echo "This script must be run as root" 1>&2
-     export SUDO_ASKPASS=~/WebstormProjects/HomePilotJSServer/askpass.sh
+# Check for -d flag to set DEBUG mode
+if [[ "$*" == *"-d"* ]]; then
+  export DEBUG=true
 fi
+
+export SUDO_ASKPASS=~/WebstormProjects/HomePilotJSServer/askpass.sh
 
 # Set the DISPLAY environment variable
 export DISPLAY=:0

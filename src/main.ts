@@ -94,10 +94,12 @@ async function initializeDriver() {
       console.log(`Node ${node.id} added to the network.`);
       node.on("ready", () => {
         console.log(`Node ${node.id} is ready.`);
-        node.getDefinedValueIDs().forEach((valueId) => {
-          const value = node.getValue(valueId);
-          console.log(`Value ID: ${valueId}, Value: ${value}`);
-        });
+        setInterval(() => {
+          node.getDefinedValueIDs().forEach((valueId) => {
+            const value = node.getValue(valueId);
+            console.log(`Value ID: ${valueId}, Value: ${value}`);
+          });
+        }, 1000);
       });
 
       node.on("value updated", (valueId, value) => {
