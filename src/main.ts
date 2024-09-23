@@ -51,16 +51,14 @@ async function detectSerialPort(): Promise<string> {
   return zwavePort.path;
 }
 
-// Initialize the Z-Wave driver with the custom transports
 async function initializeDriver() {
   const port = await detectSerialPort();
   const driver = new Driver(port, {
     logConfig: {
-      enabled: false,  // Disable internal transports
-      level: "silly",
+      enabled: true,  // Enable internal transports
+      level: "debug",  // Increase logging level to debug
       transports: [fileTransport, consoleTransport],  // Use the custom transports
     },
-    // TODO: Add your own security keys here
     securityKeys: {
       S0_Legacy: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
       S2_Unauthenticated: Buffer.from("11223344556677889900AABBCCDDEEFF", "hex"),
@@ -69,16 +67,13 @@ async function initializeDriver() {
     },
   });
 
-  // Error handler before starting the driver
   driver.on("error", (e) => {
     console.error(`Driver error: ${e}`);
   });
 
-  // Event listener for driver readiness
   driver.once("driver ready", async () => {
     console.log("Driver is ready! Initializing nodes...");
 
-    // Add a new node to the network
     console.log("Starting inclusion process...");
     try {
       const inclusionResult = await driver.controller.beginInclusion();
@@ -91,12 +86,10 @@ async function initializeDriver() {
       console.error(`Error during node inclusion: ${error}`);
     }
 
-    // Listen for node added event
     driver.controller.on("node added", (node) => {
       console.log(`Node ${node.id} added to the network.`);
       node.on("ready", () => {
         console.log(`Node ${node.id} is ready.`);
-        // Read values from the sensor
         node.getDefinedValueIDs().forEach((valueId) => {
           const value = node.getValue(valueId);
           console.log(`Value ID: ${valueId}, Value: ${value}`);
@@ -109,7 +102,6 @@ async function initializeDriver() {
     });
   });
 
-  // Start the Z-Wave driver
   async function startDriver() {
     try {
       await driver.start();
@@ -119,25 +111,23 @@ async function initializeDriver() {
     }
   }
 
-  // Handle the SIGINT or SIGTERM signals for graceful shutdown
   for (const signal of ["SIGINT", "SIGTERM"]) {
     process.on(signal, async () => {
       console.log(`Received ${signal}. Shutting down...`);
       try {
-        await driver.destroy();  // Ensure this completes before exiting
+        await driver.destroy();
         console.log("Driver destroyed successfully.");
       } catch (error) {
         console.error(`Error destroying driver: ${error}`);
       } finally {
-        if (isDebug){
+        if (isDebug) {
           stream.end();
         }
-        process.exit(0);  // Exit after the driver is destroyed
+        process.exit(0);
       }
     });
   }
 
-  // Ensure the driver is destroyed on process exit
   process.on('exit', async () => {
     try {
       await driver.destroy();
@@ -151,11 +141,9 @@ async function initializeDriver() {
     }
   });
 
-  // Call the driver start function
   startDriver();
 }
 
-// Initialize the driver
 initializeDriver().catch(error => {
   console.error(`Failed to initialize driver: ${error}`);
 });
