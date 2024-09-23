@@ -63,9 +63,9 @@ async function initializeDriver() {
     // TODO: Add your own security keys here
     securityKeys: {
       S0_Legacy: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
-      S2_Unauthenticated: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
-      S2_Authenticated: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
-      S2_AccessControl: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+      S2_Unauthenticated: Buffer.from("11223344556677889900AABBCCDDEEFF", "hex"),
+      S2_Authenticated: Buffer.from("22334455667788990011AABBCCDDEEFF", "hex"),
+      S2_AccessControl: Buffer.from("33445566778899001122AABBCCDDEEFF", "hex"),
     },
   });
 
