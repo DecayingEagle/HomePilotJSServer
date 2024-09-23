@@ -1,3 +1,3 @@
 #!/bin/bash
-# Prompt for the password
-zenity --password --title="Authentication Required"
+# Prompt for the password using ssh-askpass
+ssh-askpass "Authentication Required"
