@@ -26,7 +26,7 @@ sudo apt-get install -y ssh-askpass
 1. **Clone the repository**:
 
    ```shell
-   git clone <repository_url>
+   git clone https://github.com/DecayingEagle/HomePilotJSServer.git
    cd HomePilotJSServer
    ```
 

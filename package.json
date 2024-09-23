@@ -1,5 +1,5 @@
 {
-  "name": "${PROJECT_NAME}",
+  "name": "untitled",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,8 +9,15 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
+    "@types/node": "^22.5.5",
     "prettier": "^3.3.1",
+    "typescript": "^5.2.2",
     "vite": "^5.2.0"
+  },
+  "dependencies": {
+    "@zwave-js/server": "^1.38.0",
+    "serialport": "^12.0.0",
+    "ts-node": "^10.9.2",
+    "winston": "^3.14.2"
   }
 }
