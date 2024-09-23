@@ -65,6 +65,10 @@ async function initializeDriver() {
       S2_Authenticated: Buffer.from("22334455667788990011AABBCCDDEEFF", "hex"),
       S2_AccessControl: Buffer.from("33445566778899001122AABBCCDDEEFF", "hex"),
     },
+    securityKeysLongRange: {
+      S2_AccessControl: Buffer.from("44556677889900112233AABBCCDDEEFF", "hex"),
+      S2_Authenticated: Buffer.from("55667788990011223344AABBCCDDEEFF", "hex"),
+    },
   });
 
   driver.on("error", (e) => {
