@@ -83,17 +83,18 @@ async function initializeDriver() {
       console.error(`Failed to start Z-Wave driver: ${error}`);
     }
   }
+
+  let nodesStartedToBeAdded = false;
+  driver.controller.on("node added", (node) => {
+    console.log("Node added");
+    console.log(`Node ${node.id}`);
+    nodesStartedToBeAdded = true;
+  });
+  
   
   async function getData() {
-    let nodesStartedToBeAdded = false;
-    console.log("Attempting to get data");
-    driver.controller.on("inclusion started", () => {
-      driver.controller.on("node added", () => {
-        console.log("Node added");
-        nodesStartedToBeAdded = true;
-      });
-    });
     if (nodesStartedToBeAdded) {
+      console.log("Attempting to get data");
       driver.controller.nodes.forEach(node => {
         console.log(`Node ${node.id}`);
         let definedValueIDs = node.getDefinedValueIDs();

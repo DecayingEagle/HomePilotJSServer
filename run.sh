@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: Remove for production
 git pull
 
 # Path to the askpass script
