@@ -1,4 +1,4 @@
-import { createDefaultTransportFormat } from "@zwave-js/core";
+import { createDefaultTransportFormat, TranslatedValueID } from "@zwave-js/core";
 import { Writable } from "stream";
 import winston from "winston";
 import { Driver } from "zwave-js";
@@ -41,8 +41,6 @@ const consoleTransport = new winston.transports.Console({
   ),
 });
 
-const port = process.env.MY_VAR || "/dev/ttyACM0";  // Default to /dev/ttyACM0 if MY_VAR is not set
-
 // Function to detect the correct serial port
 async function detectSerialPort(): Promise<string> {
   const ports = await SerialPort.list();
@@ -84,7 +82,20 @@ async function initializeDriver() {
       console.error(`Failed to start Z-Wave driver: ${error}`);
     }
   }
-
+  
+  async function getData() {
+    driver.controller.nodes.forEach(node => {
+      console.log(`Node ${node.id}`);
+      let definedValueIDs = node.getDefinedValueIDs();
+      let values: Map<TranslatedValueID, any> = new Map();
+      definedValueIDs.forEach(valueID => {
+        values.set(valueID, node.getValue(valueID));
+      });
+    })
+  }
+  
+  setInterval(getData, 1000);
+  
   // Handle the SIGINT or SIGTERM signals for graceful shutdown
   for (const signal of ["SIGINT", "SIGTERM"]) {
     process.on(signal, async () => {
