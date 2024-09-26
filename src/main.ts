@@ -84,17 +84,30 @@ async function initializeDriver() {
   }
   
   async function getData() {
-    driver.controller.nodes.forEach(node => {
-      console.log(`Node ${node.id}`);
-      let definedValueIDs = node.getDefinedValueIDs();
-      let values: Map<TranslatedValueID, any> = new Map();
-      definedValueIDs.forEach(valueID => {
-        values.set(valueID, node.getValue(valueID));
+    let nodesStartedToBeAdded = false;
+    console.log("Attempting to get data");
+    driver.controller.on("inclusion started", () => {
+      driver.controller.on("node added", () => {
+        console.log("Node added");
+        nodesStartedToBeAdded = true;
       });
-      console.log(values);
-    })
+    });
+    if (nodesStartedToBeAdded) {
+      driver.controller.nodes.forEach(node => {
+        console.log(`Node ${node.id}`);
+        let definedValueIDs = node.getDefinedValueIDs();
+        let values: Map<TranslatedValueID, any> = new Map();
+        definedValueIDs.forEach(valueID => {
+          values.set(valueID, node.getValue(valueID));
+        });
+        console.log(values);
+      })
+    } else {
+      console.log("No nodes yet");
+    }
   }
   
+  //run every second
   setInterval(getData, 1000);
   
   // Handle the SIGINT or SIGTERM signals for graceful shutdown
