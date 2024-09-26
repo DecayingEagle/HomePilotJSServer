@@ -78,6 +78,10 @@ async function initializeDriver() {
       console.log(`Node ${node.id}`);
       nodesStartedToBeAdded = true;
     });
+    driver.controller.on("node found", (foundNode) => {
+      console.log("Node found");
+      console.log(`Node ${foundNode.id}`);
+    });
   });
 
   // Start the Z-Wave driver
