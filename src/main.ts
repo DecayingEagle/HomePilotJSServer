@@ -73,7 +73,7 @@ async function initializeDriver() {
   driver.once("driver ready", () => {
     console.log("Driver is ready! Initializing nodes...");
     setInterval(getData, 1000);
-    
+    nodesStartedToBeAdded = true;
   });
 
   // Start the Z-Wave driver
@@ -128,7 +128,7 @@ async function initializeDriver() {
         process.exit(0);  // Exit after the driver is destroyed
       }
     });
-  };
+  }
 
   // Ensure the driver is destroyed on process exit
   process.on('exit', async () => {
