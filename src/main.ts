@@ -86,23 +86,30 @@ async function initializeDriver() {
     }
   }
   
-  let nodes : ReadonlyMap<number, ZWaveNode> = new Map();
+  let nodesTemp : ReadonlyMap<number, ZWaveNode> = new Map();
+  let nodes : Map<number, ZWaveNode | undefined> = new Map();
   
   async function getData() {
     if (nodesStartedToBeAdded) {
       console.log("Attempting to get data");
-      nodes = driver.controller.nodes;
-      if (nodes.size > 0) {
-        console.log(nodes)
+      nodesTemp = driver.controller.nodes;
+      if (nodesTemp.size > 0) {
+        console.log(nodesTemp)
+        nodesTemp.forEach((_node, id) => {
+          if (!nodes.has(id)) {
+            nodes.set(id, driver.controller.nodes.get(id));
+          }
+        });
       } else {
         console.log("No nodes yet");
       }
-      driver.controller.nodes.forEach(node => {
-        console.log(`Node ${node.id}`);
-        let definedValueIDs = node.getDefinedValueIDs();
+      
+      nodes.forEach(node => {
+        console.log(`Node ${node?.id}`);
+        let definedValueIDs = node?.getDefinedValueIDs();
         let values: Map<string, any> = new Map();
-        definedValueIDs.forEach(valueID => {
-          values.set(valueID.commandClassName, node.getValue(valueID));
+        definedValueIDs?.forEach(valueID => {
+          values.set(valueID.commandClassName, node?.getValue(valueID));
         });
         console.log(values);
       })
