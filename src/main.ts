@@ -104,15 +104,19 @@ async function initializeDriver() {
         console.log("No nodes yet");
       }
       
-      nodes.forEach(node => {
-        console.log(`Node ${node?.id}`);
-        let definedValueIDs = node?.getDefinedValueIDs();
-        let values: Map<string, any> = new Map();
-        definedValueIDs?.forEach(valueID => {
-          values.set(valueID.commandClassName, node?.getValue(valueID));
-        });
-        console.log(values);
-      })
+      nodes.get(2)?.getAllEndpoints().forEach(endpoint => {
+        console.log(`Endpoint ${endpoint.index}`);
+      });
+      
+      // nodes.forEach(node => {
+      //   console.log(`Node ${node?.id}`);
+      //   let definedValueIDs = node?.getDefinedValueIDs();
+      //   let values: Map<string, any> = new Map();
+      //   definedValueIDs?.forEach(valueID => {
+      //     values.set(valueID.commandClassName, node?.getValue(valueID));
+      //   });
+      //   console.log(values);
+      // })
     }
   }
   
