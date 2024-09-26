@@ -26,14 +26,6 @@ const logFile = path.join(logsDir, `zwave-debug-${timestamp}.log`);
 const stream: Writable = fs.createWriteStream(logFile, { flags: "a" });
 
 // Create custom winston transports
-const fileTransport = new winston.transports.Stream({
-  stream,
-  format: createDefaultTransportFormat(
-    /* colorize: */ false,  // Disable colorization for file transport
-    /* shortTimestamps: */ true,
-  ),
-});
-
 const consoleTransport = new winston.transports.Console({
   format: createDefaultTransportFormat(
     /* colorize: */ true,  // Enable colorization for console transport
@@ -51,14 +43,23 @@ async function detectSerialPort(): Promise<string> {
   return zwavePort.path;
 }
 
-// Initialize the Z-Wave driver with the custom transports
 async function initializeDriver() {
   const port = await detectSerialPort();
   const driver = new Driver(port, {
     logConfig: {
-      enabled: false,  // Disable internal transports
-      level: "silly",
-      transports: [fileTransport, consoleTransport],  // Use the custom transports
+      enabled: true,  // Enable internal transports
+      level: "debug",  // Increase logging level to debug
+      transports: [consoleTransport],  // Use the custom transports
+    },
+    securityKeys: {
+      S0_Legacy: Buffer.from("00112233445566778899AABBCCDDEEFF", "hex"),
+      S2_Unauthenticated: Buffer.from("11223344556677889900AABBCCDDEEFF", "hex"),
+      S2_Authenticated: Buffer.from("22334455667788990011AABBCCDDEEFF", "hex"),
+      S2_AccessControl: Buffer.from("33445566778899001122AABBCCDDEEFF", "hex"),
+    },
+    securityKeysLongRange: {
+      S2_AccessControl: Buffer.from("44556677889900112233AABBCCDDEEFF", "hex"),
+      S2_Authenticated: Buffer.from("55667788990011223344AABBCCDDEEFF", "hex"),
     },
   });
 
@@ -70,7 +71,7 @@ async function initializeDriver() {
   // Event listener for driver readiness
   driver.once("driver ready", () => {
     console.log("Driver is ready! Initializing nodes...");
-    // Your node initialization code here
+    setInterval(getData, 1000);
   });
 
   // Start the Z-Wave driver
@@ -108,7 +109,7 @@ async function initializeDriver() {
   }
   
   //run every second
-  setInterval(getData, 1000);
+  
   
   // Handle the SIGINT or SIGTERM signals for graceful shutdown
   for (const signal of ["SIGINT", "SIGTERM"]) {
