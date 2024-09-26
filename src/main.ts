@@ -63,6 +63,7 @@ async function initializeDriver() {
     },
   });
 
+  let nodesStartedToBeAdded = false;
   // Error handler before starting the driver
   driver.on("error", (e) => {
     console.error(`Driver error: ${e}`);
@@ -72,6 +73,11 @@ async function initializeDriver() {
   driver.once("driver ready", () => {
     console.log("Driver is ready! Initializing nodes...");
     setInterval(getData, 1000);
+    driver.controller.on("node added", (node) => {
+      console.log("Node added");
+      console.log(`Node ${node.id}`);
+      nodesStartedToBeAdded = true;
+    });
   });
 
   // Start the Z-Wave driver
@@ -83,13 +89,6 @@ async function initializeDriver() {
       console.error(`Failed to start Z-Wave driver: ${error}`);
     }
   }
-
-  let nodesStartedToBeAdded = false;
-  driver.controller.on("node added", (node) => {
-    console.log("Node added");
-    console.log(`Node ${node.id}`);
-    nodesStartedToBeAdded = true;
-  });
   
   
   async function getData() {
