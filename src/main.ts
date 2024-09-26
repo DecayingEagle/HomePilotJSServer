@@ -1,7 +1,7 @@
 import { createDefaultTransportFormat } from "@zwave-js/core";
 import { Writable } from "stream";
 import winston from "winston";
-import { Driver } from "zwave-js";
+import { Driver, ZWaveNode } from "zwave-js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -73,15 +73,7 @@ async function initializeDriver() {
   driver.once("driver ready", () => {
     console.log("Driver is ready! Initializing nodes...");
     setInterval(getData, 1000);
-    driver.controller.on("node added", (node) => {
-      console.log("Node added");
-      console.log(`Node ${node.id}`);
-      nodesStartedToBeAdded = true;
-    });
-    driver.controller.on("node found", (foundNode) => {
-      console.log("Node found");
-      console.log(`Node ${foundNode.id}`);
-    });
+    
   });
 
   // Start the Z-Wave driver
@@ -94,10 +86,17 @@ async function initializeDriver() {
     }
   }
   
+  let nodes : ReadonlyMap<number, ZWaveNode> = new Map();
   
   async function getData() {
     if (nodesStartedToBeAdded) {
       console.log("Attempting to get data");
+      nodes = driver.controller.nodes;
+      if (nodes.size > 0) {
+        console.log(nodes)
+      } else {
+        console.log("No nodes yet");
+      }
       driver.controller.nodes.forEach(node => {
         console.log(`Node ${node.id}`);
         let definedValueIDs = node.getDefinedValueIDs();
@@ -107,8 +106,6 @@ async function initializeDriver() {
         });
         console.log(values);
       })
-    } else {
-      console.log("No nodes yet");
     }
   }
   
