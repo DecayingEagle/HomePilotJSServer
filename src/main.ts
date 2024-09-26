@@ -1,4 +1,4 @@
-import { createDefaultTransportFormat, TranslatedValueID } from "@zwave-js/core";
+import { createDefaultTransportFormat } from "@zwave-js/core";
 import { Writable } from "stream";
 import winston from "winston";
 import { Driver } from "zwave-js";
@@ -96,9 +96,9 @@ async function initializeDriver() {
       driver.controller.nodes.forEach(node => {
         console.log(`Node ${node.id}`);
         let definedValueIDs = node.getDefinedValueIDs();
-        let values: Map<TranslatedValueID, any> = new Map();
+        let values: Map<string, any> = new Map();
         definedValueIDs.forEach(valueID => {
-          values.set(valueID, node.getValue(valueID));
+          values.set(valueID.commandClassName, node.getValue(valueID));
         });
         console.log(values);
       })
